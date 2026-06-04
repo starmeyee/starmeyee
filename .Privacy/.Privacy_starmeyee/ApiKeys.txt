@@ -1,0 +1,30 @@
+Firebase API 
+
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDeFneTPckOvrhf9J1pQWdZMF82Tvcq2BU",
+  authDomain: "starmeyee-ceea7.firebaseapp.com",
+  projectId: "starmeyee-ceea7",
+  storageBucket: "starmeyee-ceea7.firebasestorage.app",
+  messagingSenderId: "172948327726",
+  appId: "1:172948327726:web:fe777ee5a3b7936e67bebf",
+  measurementId: "G-Y3MVK60K4Z"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+Groq API 
+
+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
+
+Github Personal Token :- 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
+
