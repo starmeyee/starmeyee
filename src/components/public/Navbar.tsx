@@ -35,13 +35,16 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full pt-4 px-4 sm:px-6 flex justify-center">
       <nav className="flex items-center justify-between w-full max-w-5xl px-6 py-3 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 shadow-lg">
-        <Link href="/" className="flex items-center gap-2 group">
+        <Link href="/" className="flex items-center gap-3 group">
           <motion.div
-            whileHover={{ rotate: 180 }}
-            transition={{ duration: 0.5, ease: 'easeInOut' }}
-            className="w-6 h-6 rounded-full bg-gradient-to-tr from-purple-500 to-cyan-400"
-          />
-          <span className="font-display font-medium text-lg tracking-wide text-white/90 group-hover:text-white transition-colors">
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="w-8 h-8 rounded-full overflow-hidden border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/profile.jpeg" alt="StarMeyee" className="w-full h-full object-cover" />
+          </motion.div>
+          <span className="font-oleo text-xl tracking-wide text-white/90 group-hover:text-white transition-colors mt-1">
             {siteName}
           </span>
         </Link>

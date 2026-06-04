@@ -26,31 +26,31 @@ export default function AboutPreviewSection({ content }: AboutPreviewSectionProp
 
           <div className="relative z-10 grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl md:text-5xl font-display font-bold text-gray-900 dark:text-white mb-6">
+              <h2 className="text-3xl md:text-5xl font-oleo font-bold text-white mb-6">
                 {title || "Who am I?"}
               </h2>
-              <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 font-body leading-relaxed">
+              <p className="text-lg text-white/80 mb-8 font-klee leading-relaxed">
                 {description ||
                   "A brief introduction about the creator, the vision, and the journey that led to StarMeyee. Discover the mind behind the cosmos."}
               </p>
               <Link
                 href="/about"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/10 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-gray-900 dark:text-white font-medium"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/10 border border-white/10 hover:bg-white/20 transition-colors text-white font-medium shadow-[0_0_15px_rgba(255,255,255,0.05)]"
               >
                 Read full story
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
             
-            {imageUrl && (
-              <div className="relative aspect-square md:aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
-                <img
-                  src={imageUrl}
-                  alt="About preview"
-                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                />
-              </div>
-            )}
+            <div className="relative aspect-square md:aspect-[4/3] rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(123,31,162,0.3)] border border-white/10 group">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={imageUrl || "/profile.jpeg"}
+                alt="About StarMeyee"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            </div>
           </div>
         </motion.div>
       </div>

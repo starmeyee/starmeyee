@@ -77,14 +77,16 @@ export default function HomePage() {
       
       {/* Fallback if no sections exist yet */}
       {sections.length === 0 && (
-        <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 text-center">
-          <h1 className="text-4xl md:text-6xl font-display font-bold text-white mb-6">
-            Welcome to StarMeyee
-          </h1>
-          <p className="text-xl text-gray-400 font-body max-w-2xl">
-            The cosmos is currently empty. Please configure the homepage sections in the admin dashboard.
-          </p>
-        </div>
+        <HeroSection 
+          content={{
+            title: "Exploring the Wonders of the Universe and the Mind",
+            description: "Welcome to StarMeyee, a journey through cosmos, culture, and curiosity.",
+            primaryButtonText: "Begin the Journey",
+            primaryButtonLink: "/about",
+            secondaryButtonText: "View Observatory",
+            secondaryButtonLink: "/observatory"
+          }}
+        />
       )}
     </main>
   );
