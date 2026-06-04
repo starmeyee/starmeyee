@@ -12,20 +12,20 @@ export default function GalleryPreviewSection({ content }: GalleryPreviewSection
   const images = [
     {
       id: "1",
-      url: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2000&auto=format&fit=crop",
-      title: "Nebular Dust",
+      url: "/observatory/obs-8.jpeg",
+      title: "Starry Memory",
       span: "md:col-span-2 md:row-span-2",
     },
     {
       id: "2",
-      url: "https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?q=80&w=2000&auto=format&fit=crop",
-      title: "Milky Way Core",
+      url: "/observatory/obs-2.jpeg",
+      title: "Silent Night",
       span: "md:col-span-1 md:row-span-1",
     },
     {
       id: "3",
-      url: "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?q=80&w=2000&auto=format&fit=crop",
-      title: "Deep Field",
+      url: "/observatory/obs-5.jpeg",
+      title: "Distant Lights",
       span: "md:col-span-1 md:row-span-1",
     },
   ];

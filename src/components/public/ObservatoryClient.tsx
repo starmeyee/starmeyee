@@ -12,7 +12,18 @@ interface ObservatoryClientProps {
 export default function ObservatoryClient({ initialItems }: ObservatoryClientProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const selectedItem = initialItems.find((item) => item.id === selectedId);
+  const fallbackItems: GalleryItem[] = Array.from({ length: 11 }).map((_, i) => ({
+    id: `obs-${i + 1}`,
+    imageUrl: `/observatory/obs-${i + 1}.jpeg`,
+    title: `Cosmic Vision ${i + 1}`,
+    description: `A moment captured in the cosmos.`,
+    displayOrder: i,
+    enabled: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  }));
+
+  const itemsToRender = initialItems.length > 0 ? initialItems : fallbackItems;
 
   return (
     <main className="min-h-screen relative overflow-hidden py-32 px-4 sm:px-6">
@@ -29,19 +40,9 @@ export default function ObservatoryClient({ initialItems }: ObservatoryClientPro
           </p>
         </motion.div>
 
-        {initialItems.length === 0 ? (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex flex-col items-center justify-center py-20 text-center bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-12"
-          >
-            <h2 className="text-3xl font-oleo text-white/80 mb-4">No stars in sight yet</h2>
-            <p className="text-white/60 font-klee text-lg">The telescope is focusing. Imagery will appear here soon.</p>
-          </motion.div>
-        ) : (
-          <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
-            <AnimatePresence>
-              {initialItems.map((item) => (
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
+          <AnimatePresence>
+            {itemsToRender.map((item) => (
                 <motion.div
                   layout
                   layoutId={`card-${item.id}`}
@@ -73,9 +74,8 @@ export default function ObservatoryClient({ initialItems }: ObservatoryClientPro
                   </div>
                 </motion.div>
               ))}
-            </AnimatePresence>
-          </div>
-        )}
+          </AnimatePresence>
+        </div>
       </div>
 
       <AnimatePresence>
