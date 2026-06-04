@@ -12,6 +12,7 @@ export default function FindYourStorySection() {
   
   const { completion, complete, error } = useCompletion({
     api: "/api/recommend",
+    streamProtocol: "text",
     onFinish: () => setIsSearching(false),
     onError: () => setIsSearching(false),
   });

@@ -61,7 +61,7 @@ ${contentContext}`;
       prompt: `Feeling: ${feeling}`,
     });
 
-    return result.toDataStreamResponse();
+    return result.toTextStreamResponse();
   } catch (error) {
     console.error("Recommendation error:", error);
     return new Response("Error generating recommendation", { status: 500 });

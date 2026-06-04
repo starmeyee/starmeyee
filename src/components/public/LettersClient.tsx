@@ -22,6 +22,7 @@ export default function LettersClient() {
 
   const { completion, complete, error } = useCompletion({
     api: "/api/letters/generate",
+    streamProtocol: "text",
     onFinish: () => setIsGenerating(false),
     onError: (err) => {
       setIsGenerating(false);

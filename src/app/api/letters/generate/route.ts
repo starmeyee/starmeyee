@@ -30,7 +30,7 @@ Maximum 150 words.`,
       }
     });
 
-    return result.toDataStreamResponse();
+    return result.toTextStreamResponse();
   } catch (error) {
     console.error("Letter generation error:", error);
     return new Response("Error generating letter", { status: 500 });

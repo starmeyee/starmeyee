@@ -1,6 +1,7 @@
 import { db } from "../config";
 import { doc, getDoc, setDoc, collection, addDoc } from "firebase/firestore";
-import { groq } from "../../groq";
+import { generateText } from "ai";
+import { createGroq } from "@ai-sdk/groq";
 
 export interface CosmicThought {
   id: string;
@@ -25,20 +26,20 @@ export const aiService = {
     
     try {
       if (process.env.GROQ_API_KEY) {
-        const response = await groq.chat.completions.create({
-          messages: [
-            {
-              role: "system",
-              content: "You are StarMeyee, a deeply curious, philosophical astronomer who loves Japanese aesthetics and storytelling. Generate a single, profound 'Cosmic Thought of the Day' (max 2 sentences) blending astronomy, human nature, and imagination. Do not use quotes or introductory text."
-            }
-          ],
-          model: "llama-3.3-70b-versatile",
+        const groq = createGroq({
+          apiKey: process.env.GROQ_API_KEY,
+        });
+
+        const { text } = await generateText({
+          model: groq("llama-3.3-70b-versatile"),
+          system: "You are StarMeyee, a deeply curious, philosophical astronomer who loves Japanese aesthetics and storytelling. Generate a single, profound 'Cosmic Thought of the Day' (max 2 sentences) blending astronomy, human nature, and imagination. Do not use quotes or introductory text.",
+          prompt: "Generate today's cosmic thought.",
           temperature: 0.8,
-          max_tokens: 150,
+          maxOutputTokens: 150,
         });
         
-        if (response.choices[0]?.message?.content) {
-          thoughtText = response.choices[0].message.content.trim();
+        if (text) {
+          thoughtText = text.trim();
         }
       } else {
         console.warn("No GROQ_API_KEY found, using fallback thought.");
