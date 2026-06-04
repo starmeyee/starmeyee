@@ -13,13 +13,14 @@ import {
 import { db } from '../config';
 import { COLLECTIONS } from '../collections';
 import type { HomepageSection } from '@/types';
+import { getDocsWithTimeout } from '../utils';
 
 export const homepageService = {
   async getAllSections(): Promise<HomepageSection[]> {
     try {
       const colRef = collection(db, COLLECTIONS.HOMEPAGE_SECTIONS);
       const q = query(colRef, orderBy('displayOrder', 'asc'));
-      const snapshot = await getDocs(q);
+      const snapshot = await getDocsWithTimeout(q, 'homepageService.getAllSections');
       return snapshot.docs.map((d) => ({
         id: d.id,
         ...d.data(),

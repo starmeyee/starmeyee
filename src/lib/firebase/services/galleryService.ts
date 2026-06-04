@@ -13,6 +13,7 @@ import { db } from '../config';
 import { COLLECTIONS } from '../collections';
 import { GalleryItem } from '@/types';
 import { storageService } from './storage';
+import { getDocsWithTimeout } from '../utils';
 
 export const galleryService = {
   async getAllGalleryItems(): Promise<GalleryItem[]> {
@@ -20,9 +21,10 @@ export const galleryService = {
       collection(db, COLLECTIONS.GALLERY_ITEMS),
       orderBy('displayOrder', 'asc')
     );
-    const snap = await getDocs(q);
+    const snap = await getDocsWithTimeout(q, 'galleryService.getAllGalleryItems');
     return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as GalleryItem));
   },
+
 
   async addGalleryItem(data: Omit<GalleryItem, 'id' | 'createdAt' | 'imageUrl'> & { imageFile: File }): Promise<string> {
     const path = `gallery/${Date.now()}_${data.imageFile.name}`;

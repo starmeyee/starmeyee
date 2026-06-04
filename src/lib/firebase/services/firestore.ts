@@ -15,13 +15,14 @@ import {
   setDoc,
 } from 'firebase/firestore';
 import { db } from '../config';
+import { getDocWithTimeout, getDocsWithTimeout } from '../utils';
 
 export const firestoreService = {
   // Get a single document by ID
   async getDocument<T = DocumentData>(collectionName: string, id: string): Promise<T | null> {
     try {
       const docRef = doc(db, collectionName, id);
-      const docSnap = await getDoc(docRef);
+      const docSnap = await getDocWithTimeout(docRef, `firestoreService.getDocument(${collectionName})`);
       if (docSnap.exists()) {
         return { id: docSnap.id, ...docSnap.data() } as T;
       }
@@ -37,13 +38,14 @@ export const firestoreService = {
     try {
       const colRef = collection(db, collectionName);
       const q = query(colRef, ...constraints);
-      const querySnapshot = await getDocs(q);
+      const querySnapshot = await getDocsWithTimeout(q, `firestoreService.getDocuments(${collectionName})`);
       return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as T);
     } catch (error) {
       console.error(`Error fetching documents from ${collectionName}:`, error);
       throw error;
     }
   },
+
 
   // Add a new document (auto ID)
   async addDocument<T extends DocumentData>(collectionName: string, data: T): Promise<string> {

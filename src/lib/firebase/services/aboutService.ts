@@ -9,10 +9,11 @@ import {
 import { db } from '../config';
 import { COLLECTIONS } from '../collections';
 import { AboutSection } from '@/types';
+import { getDocsWithTimeout } from '../utils';
 
 export const aboutService = {
   async getAboutContent(): Promise<AboutSection[]> {
-    const snap = await getDocs(collection(db, COLLECTIONS.ABOUT_CONTENT));
+    const snap = await getDocsWithTimeout(collection(db, COLLECTIONS.ABOUT_CONTENT), 'aboutService.getAboutContent');
     return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as AboutSection));
   },
 
@@ -24,8 +25,9 @@ export const aboutService = {
   },
 
   async initializeAboutSections(): Promise<void> {
-    const snap = await getDocs(collection(db, COLLECTIONS.ABOUT_CONTENT));
+    const snap = await getDocsWithTimeout(collection(db, COLLECTIONS.ABOUT_CONTENT), 'aboutService.initializeAboutSections');
     if (!snap.empty) return; // Already initialized
+
 
     const sections = [
       { key: 'who_am_i', label: 'Who Am I' },

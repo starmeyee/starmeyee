@@ -12,6 +12,7 @@ import {
 import { db } from '../config';
 import { COLLECTIONS } from '../collections';
 import { MusicItem } from '@/types';
+import { getDocsWithTimeout } from '../utils';
 
 export const musicService = {
   async getAllMusicItems(): Promise<MusicItem[]> {
@@ -19,9 +20,10 @@ export const musicService = {
       collection(db, COLLECTIONS.MUSIC_ITEMS),
       orderBy('displayOrder', 'asc')
     );
-    const snap = await getDocs(q);
+    const snap = await getDocsWithTimeout(q, 'musicService.getAllMusicItems');
     return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as MusicItem));
   },
+
 
   async createMusicItem(data: Omit<MusicItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
     const ref = await addDoc(collection(db, COLLECTIONS.MUSIC_ITEMS), {

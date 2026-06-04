@@ -57,7 +57,7 @@ export default function NewsletterSection({ content }: NewsletterSectionProps) {
     <section className="py-24 px-6 relative overflow-hidden">
       <div className="max-w-4xl mx-auto">
         <motion.div
-          className="relative bg-gradient-to-br from-indigo-900/40 via-purple-900/20 to-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-16 text-center overflow-hidden"
+          className="relative bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 md:p-16 text-center overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
@@ -65,15 +65,15 @@ export default function NewsletterSection({ content }: NewsletterSectionProps) {
         >
           {/* Animated background elements */}
           <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-            <div className="absolute -top-[50%] -left-[10%] w-[70%] h-[150%] bg-indigo-500/10 rotate-12 blur-3xl rounded-full" />
-            <div className="absolute top-[20%] -right-[20%] w-[60%] h-[100%] bg-purple-500/10 -rotate-12 blur-3xl rounded-full" />
+            <div className="absolute -top-[50%] -left-[10%] w-[70%] h-[150%] bg-indigo-500/10 rotate-12 blur-3xl rounded-full mix-blend-screen" />
+            <div className="absolute top-[20%] -right-[20%] w-[60%] h-[100%] bg-purple-500/10 -rotate-12 blur-3xl rounded-full mix-blend-screen" />
           </div>
 
           <div className="relative z-10">
-            <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-4">
+            <h2 className="text-3xl md:text-5xl font-oleo text-white mb-6 drop-shadow-lg">
               {settings.headline || "Join the Cosmos"}
             </h2>
-            <p className="text-lg text-gray-300 mb-10 max-w-2xl mx-auto font-body">
+            <p className="text-lg text-white/70 mb-10 max-w-2xl mx-auto font-klee leading-relaxed">
               {settings.description ||
                 "Subscribe to receive the latest updates, thoughts, and cosmic musings directly in your inbox."}
             </p>

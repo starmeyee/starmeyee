@@ -10,8 +10,13 @@ export const metadata = {
 };
 
 export default async function WritesPage() {
-  const allNovels = await novelService.getAllNovels();
-  const publishedNovels = allNovels.filter(n => n.status === "published");
+  let publishedNovels = [];
+  try {
+    const allNovels = await novelService.getAllNovels();
+    publishedNovels = allNovels.filter(n => n.status === "published");
+  } catch (error) {
+    console.error("Error fetching novels for library page:", error);
+  }
 
   return (
     <div className="container mx-auto px-4 py-16">
@@ -23,6 +28,7 @@ export default async function WritesPage() {
       </div>
 
       {publishedNovels.length === 0 ? (
+
         <div className="text-center text-muted-foreground py-20">
           <p>No novels available at the moment. Check back soon!</p>
         </div>

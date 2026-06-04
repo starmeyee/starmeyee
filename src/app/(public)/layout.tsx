@@ -3,11 +3,14 @@ import Navbar from '@/components/public/Navbar';
 import Footer from '@/components/public/Footer';
 import CosmicBackground from '@/components/public/CosmicBackground';
 
+export const revalidate = 60; // Cache and revalidate public pages every 60 seconds
+
 export default function PublicLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+
   return (
     <div className="relative flex min-h-[100dvh] flex-col text-white">
       <CosmicBackground />

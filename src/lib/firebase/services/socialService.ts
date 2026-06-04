@@ -10,13 +10,15 @@ import {
 import { db } from '../config';
 import { COLLECTIONS } from '../collections';
 import type { SocialLink } from '@/types';
+import { getDocsWithTimeout } from '../utils';
 
 export const socialService = {
   async getAllSocialLinks(): Promise<SocialLink[]> {
     try {
       const colRef = collection(db, COLLECTIONS.SOCIAL_LINKS);
-      const snapshot = await getDocs(colRef);
+      const snapshot = await getDocsWithTimeout(colRef, 'socialService.getAllSocialLinks');
       return snapshot.docs.map((d) => ({
+
         id: d.id,
         ...d.data(),
       })) as SocialLink[];

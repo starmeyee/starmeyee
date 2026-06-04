@@ -14,6 +14,7 @@ import {
 import { db } from '../config';
 import { COLLECTIONS } from '../collections';
 import { Novel, NovelCategory } from '@/types';
+import { getDocsWithTimeout, getDocWithTimeout } from '../utils';
 
 export const novelService = {
   async getAllNovels(): Promise<Novel[]> {
@@ -21,20 +22,21 @@ export const novelService = {
       collection(db, COLLECTIONS.NOVELS),
       orderBy('createdAt', 'desc')
     );
-    const snap = await getDocs(q);
+    const snap = await getDocsWithTimeout(q, 'novelService.getAllNovels');
     return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Novel));
   },
 
   async getNovelById(id: string): Promise<Novel | null> {
-    const snap = await getDoc(doc(db, COLLECTIONS.NOVELS, id));
+    const snap = await getDocWithTimeout(doc(db, COLLECTIONS.NOVELS, id), 'novelService.getNovelById');
     return snap.exists() ? ({ id: snap.id, ...snap.data() } as Novel) : null;
   },
 
   async getNovelBySlug(slug: string): Promise<Novel | null> {
     const q = query(collection(db, COLLECTIONS.NOVELS), where('slug', '==', slug));
-    const snap = await getDocs(q);
+    const snap = await getDocsWithTimeout(q, 'novelService.getNovelBySlug');
     return snap.empty ? null : ({ id: snap.docs[0].id, ...snap.docs[0].data() } as Novel);
   },
+
 
   async createNovel(data: Omit<Novel, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
     const ref = await addDoc(collection(db, COLLECTIONS.NOVELS), {
@@ -61,9 +63,10 @@ export const novelService = {
       collection(db, COLLECTIONS.NOVEL_CATEGORIES),
       orderBy('createdAt', 'asc')
     );
-    const snap = await getDocs(q);
+    const snap = await getDocsWithTimeout(q, 'novelService.getAllCategories');
     return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as NovelCategory));
   },
+
 
   async createCategory(data: Omit<NovelCategory, 'id' | 'createdAt'>): Promise<string> {
     const ref = await addDoc(collection(db, COLLECTIONS.NOVEL_CATEGORIES), {

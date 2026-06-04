@@ -13,6 +13,7 @@ import {
 import { db } from '../config';
 import { COLLECTIONS } from '../collections';
 import { Product, ProductCategory } from '@/types';
+import { getDocsWithTimeout, getDocWithTimeout } from '../utils';
 
 export const productService = {
   async getAllProducts(): Promise<Product[]> {
@@ -20,12 +21,12 @@ export const productService = {
       collection(db, COLLECTIONS.PRODUCTS),
       orderBy('createdAt', 'desc')
     );
-    const snap = await getDocs(q);
+    const snap = await getDocsWithTimeout(q, 'productService.getAllProducts');
     return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
   },
 
   async getProductById(id: string): Promise<Product | null> {
-    const snap = await getDoc(doc(db, COLLECTIONS.PRODUCTS, id));
+    const snap = await getDocWithTimeout(doc(db, COLLECTIONS.PRODUCTS, id), 'productService.getProductById');
     return snap.exists() ? ({ id: snap.id, ...snap.data() } as Product) : null;
   },
 
@@ -54,7 +55,7 @@ export const productService = {
       collection(db, COLLECTIONS.PRODUCT_CATEGORIES),
       orderBy('createdAt', 'asc')
     );
-    const snap = await getDocs(q);
+    const snap = await getDocsWithTimeout(q, 'productService.getAllCategories');
     return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as ProductCategory));
   },
 

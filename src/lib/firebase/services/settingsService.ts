@@ -7,6 +7,7 @@ import {
 import { db } from '../config';
 import { COLLECTIONS } from '../collections';
 import type { SiteSettings } from '@/types';
+import { getDocWithTimeout } from '../utils';
 
 const SETTINGS_ID = 'main';
 
@@ -14,9 +15,10 @@ export const settingsService = {
   async getSettings(): Promise<SiteSettings | null> {
     try {
       const docRef = doc(db, COLLECTIONS.SITE_SETTINGS, SETTINGS_ID);
-      const snap = await getDoc(docRef);
+      const snap = await getDocWithTimeout(docRef, 'settingsService.getSettings');
       if (!snap.exists()) return null;
       return {
+
         id: snap.id,
         ...snap.data(),
         updatedAt: snap.data().updatedAt?.toDate?.() ?? new Date(),

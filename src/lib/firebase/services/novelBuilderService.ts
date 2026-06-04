@@ -15,6 +15,7 @@ import {
 import { db } from '../config';
 import { COLLECTIONS } from '../collections';
 import { NovelChapter, NovelPage } from '@/types';
+import { getDocsWithTimeout } from '../utils';
 
 export const novelBuilderService = {
   // Chapters
@@ -24,7 +25,7 @@ export const novelBuilderService = {
       where('novelId', '==', novelId),
       orderBy('displayOrder', 'asc')
     );
-    const snap = await getDocs(q);
+    const snap = await getDocsWithTimeout(q, 'novelBuilderService.getChaptersForNovel');
     return snap.docs.map(d => ({ id: d.id, ...d.data() } as NovelChapter));
   },
 
@@ -33,9 +34,10 @@ export const novelBuilderService = {
       collection(db, COLLECTIONS.NOVEL_CHAPTERS),
       where('slug', '==', slug)
     );
-    const snap = await getDocs(q);
+    const snap = await getDocsWithTimeout(q, 'novelBuilderService.getChapterBySlug');
     return snap.empty ? null : ({ id: snap.docs[0].id, ...snap.docs[0].data() } as NovelChapter);
   },
+
 
   async createChapter(data: Omit<NovelChapter, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
     const ref = await addDoc(collection(db, COLLECTIONS.NOVEL_CHAPTERS), {
@@ -74,9 +76,10 @@ export const novelBuilderService = {
       where('chapterId', '==', chapterId),
       orderBy('displayOrder', 'asc')
     );
-    const snap = await getDocs(q);
+    const snap = await getDocsWithTimeout(q, 'novelBuilderService.getPagesForChapter');
     return snap.docs.map(d => ({ id: d.id, ...d.data() } as NovelPage));
   },
+
 
   async createPage(data: Omit<NovelPage, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
     const ref = await addDoc(collection(db, COLLECTIONS.NOVEL_PAGES), {

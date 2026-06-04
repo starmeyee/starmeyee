@@ -1,98 +1,88 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { musicService } from "@/lib/firebase/services/musicService";
-import type { MusicItem } from "@/types";
-import { Play } from "lucide-react";
+import { Play, Music } from "lucide-react";
 
 interface MusicPreviewSectionProps {
-  content: Record<string, any>;
+  content?: Record<string, any>;
 }
 
 export default function MusicPreviewSection({ content }: MusicPreviewSectionProps) {
-  const { title, description } = content;
-  const [musicItems, setMusicItems] = useState<MusicItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchMusic() {
-      try {
-        const items = await musicService.getAllMusicItems();
-        setMusicItems(items.filter((item) => item.featured).slice(0, 4));
-      } catch (error) {
-        console.error("Error fetching music:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchMusic();
-  }, []);
-
-  if (loading || musicItems.length === 0) return null;
+  const playlist = [
+    {
+      title: "Suzume",
+      artist: "RADWIMPS",
+      image: "https://i.scdn.co/image/ab67616d0000b27376c6691dc57c2cba450bd8ee",
+      color: "from-blue-500/20",
+    },
+    {
+      title: "Shinunoga E-Wa",
+      artist: "Fujii Kaze",
+      image: "https://i.scdn.co/image/ab67616d0000b273b060d40be44d9f1db71ec5d8",
+      color: "from-orange-500/20",
+    },
+    {
+      title: "Idol",
+      artist: "YOASOBI",
+      image: "https://i.scdn.co/image/ab67616d0000b27379201db4b86e88e2c0e86b05",
+      color: "from-pink-500/20",
+    },
+    {
+      title: "NIGHT DANCER",
+      artist: "imase",
+      image: "https://i.scdn.co/image/ab67616d0000b2733d98a0ae7c78a3a9babaf8af",
+      color: "from-purple-500/20",
+    },
+    {
+      title: "Suki Dakara",
+      artist: "Yuika",
+      image: "https://i.scdn.co/image/ab67616d0000b273b751dc3e8d7d457635293291",
+      color: "from-yellow-500/20",
+    },
+  ];
 
   return (
-    <section className="py-24 px-6">
+    <section className="py-24 px-6 relative z-10">
       <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-3xl md:text-5xl font-display font-bold text-gray-900 dark:text-white mb-4">
-            {title || "Soundscapes"}
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            {description || "Melodies that accompany the thoughts."}
-          </p>
-        </motion.div>
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+          <div>
+            <div className="flex items-center gap-2 text-indigo-400 mb-4">
+              <Music className="w-5 h-5" />
+              <span className="font-medium tracking-wide uppercase text-sm">Soundtrack of My Universe</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-oleo text-white mb-4">Current Vibrations</h2>
+            <p className="text-white/70 font-klee text-xl max-w-xl">
+              The melodies that fuel my imagination and score my stargazing sessions.
+            </p>
+          </div>
+        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {musicItems.map((item, idx) => (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+          {playlist.map((song, idx) => (
             <motion.div
-              key={item.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.5, delay: idx * 0.1 }}
-              className="group relative bg-white/5 backdrop-blur-md border border-white/10 dark:bg-black/40 rounded-2xl overflow-hidden hover:bg-white/10 dark:hover:bg-white/5 transition-colors"
+              key={idx}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: idx * 0.1, duration: 0.6 }}
+              className="group cursor-pointer"
             >
-              <div className="aspect-square w-full relative overflow-hidden">
-                {item.coverImage ? (
-                  <img
-                    src={item.coverImage}
-                    alt={item.songTitle}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gray-800 flex items-center justify-center">
-                    <Play className="w-10 h-10 text-gray-600" />
+              <div className="relative aspect-square rounded-2xl overflow-hidden mb-4 shadow-lg">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={song.image}
+                  alt={song.title}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className={`absolute inset-0 bg-gradient-to-t ${song.color} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 transform scale-75 group-hover:scale-100 transition-transform duration-300">
+                    <Play className="w-5 h-5 text-white ml-1" />
                   </div>
-                )}
-                
-                {/* Play Overlay */}
-                <a
-                  href={item.spotifyLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm"
-                >
-                  <div className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                    <Play className="w-6 h-6 text-white ml-1" />
-                  </div>
-                </a>
+                </div>
               </div>
-              
-              <div className="p-5 text-center">
-                <h3 className="text-lg font-display font-bold text-gray-900 dark:text-white truncate">
-                  {item.songTitle}
-                </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400 truncate mt-1">
-                  {item.artist}
-                </p>
-              </div>
+              <h3 className="text-white font-medium text-lg truncate group-hover:text-indigo-300 transition-colors">{song.title}</h3>
+              <p className="text-white/60 text-sm truncate">{song.artist}</p>
             </motion.div>
           ))}
         </div>

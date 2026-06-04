@@ -38,15 +38,26 @@ export async function generateMetadata(
 
 export default async function NovelLandingPage({ params }: Props) {
   const { slug } = await params;
-  const novel = await novelService.getNovelBySlug(slug);
+  
+  let novel = null;
+  let publishedChapters = [];
+  let firstChapter = null;
+
+  try {
+    novel = await novelService.getNovelBySlug(slug);
+    if (novel && novel.status === "published") {
+      const allChapters = await novelBuilderService.getChaptersForNovel(novel.id);
+      publishedChapters = allChapters.filter(c => c.published);
+      firstChapter = publishedChapters[0];
+    }
+  } catch (error) {
+    console.error("Error loading novel data in WritesPage:", error);
+  }
 
   if (!novel || novel.status !== "published") {
     notFound();
   }
 
-  const allChapters = await novelBuilderService.getChaptersForNovel(novel.id);
-  const publishedChapters = allChapters.filter(c => c.published);
-  const firstChapter = publishedChapters[0];
 
   return (
     <div className="min-h-screen bg-background">
