@@ -1,6 +1,7 @@
 export const COLLECTIONS = {
   USERS: 'users',
   NOVELS: 'novels',
+  NOVEL_CHAPTERS: 'novel_chapters',
   NOVEL_PAGES: 'novel_pages',
   NOVEL_CATEGORIES: 'novel_categories',
   PRODUCTS: 'products',
@@ -15,6 +16,8 @@ export const COLLECTIONS = {
   SITE_SETTINGS: 'site_settings',
   SUBSCRIBERS: 'subscribers',
   ANALYTICS: 'analytics',
+  NOVEL_ANALYTICS: 'novel_analytics',
+  READ_PROGRESS: 'read_progress',
 } as const;
 
 export type CollectionName = typeof COLLECTIONS[keyof typeof COLLECTIONS];

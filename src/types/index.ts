@@ -37,23 +37,51 @@ export interface NovelCategory {
   createdAt: Date;
 }
 
-export type BlockType = "text" | "image" | "sticker" | "quote" | "divider" | "custom";
+export type BlockType = "text" | "image" | "sticker" | "quote" | "divider" | "callout" | "custom";
 
 export interface ContentBlock {
   id: string;
   type: BlockType;
-  content: Record<string, unknown>;
+  content: Record<string, any>;
   order: number;
+}
+
+export interface NovelChapter {
+  id: string;
+  novelId: string;
+  title: string;
+  slug: string;
+  displayOrder: number;
+  published: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface NovelPage {
   id: string;
-  novelId: string;
-  pageNumber: number;
+  chapterId: string;
   title: string;
+  displayOrder: number;
   blocks: ContentBlock[];
   published: boolean;
   createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Sticker {
+  id: string;
+  name: string;
+  imageUrl: string;
+  category: string;
+  createdAt: Date;
+}
+
+export interface ReadProgress {
+  id: string; // userId or anonymousId
+  novelId: string;
+  chapterId: string;
+  pageId: string;
+  completionPercent: number;
   updatedAt: Date;
 }
 
