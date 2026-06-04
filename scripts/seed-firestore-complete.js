@@ -124,7 +124,7 @@ const SEED_DATA = {
         title: 'The Cosmic Wanderer',
         slug: 'cosmic-wanderer',
         description: 'A journey through the stars to find the meaning of existence.',
-        coverImage: '/observatory-mock.jpg',
+        coverImage: '/observatory/obs-1.jpeg',
         status: 'published',
         featured: true,
         categories: ['sci_fi', 'philosophy'],
@@ -184,7 +184,7 @@ const SEED_DATA = {
         title: 'The Cosmic Wanderer (Digital Edition)',
         slug: 'cosmic-wanderer-digital',
         description: 'Get the complete digital ebook with exclusive illustrations.',
-        coverImage: '/observatory-mock.jpg',
+        coverImage: '/observatory/obs-2.jpeg',
         price: 4.99,
         gumroadLink: 'https://gumroad.com',
         featured: true,
@@ -202,27 +202,143 @@ const SEED_DATA = {
     {
       id: 'gal_item_1',
       data: {
-        title: 'Orion Nebula',
-        description: 'A vibrant nursery of stars in the deep sky.',
-        imageUrl: '/observatory-mock.jpg',
+        title: 'Starry Memory',
+        description: 'A deep space vista looking back at billions of distant suns.',
+        imageUrl: '/observatory/obs-8.jpeg',
         featuredOnHomepage: true,
         featuredInObservatory: true,
         displayOrder: 0,
+        createdAt: new Date()
+      }
+    },
+    {
+      id: 'gal_item_2',
+      data: {
+        title: 'Silent Night',
+        description: 'Starlight sculpting deep dust columns and gas formations.',
+        imageUrl: '/observatory/obs-2.jpeg',
+        featuredOnHomepage: true,
+        featuredInObservatory: true,
+        displayOrder: 1,
+        createdAt: new Date()
+      }
+    },
+    {
+      id: 'gal_item_3',
+      data: {
+        title: 'Distant Lights',
+        description: 'A swirl of interstellar dust under the gravity of a black hole.',
+        imageUrl: '/observatory/obs-5.jpeg',
+        featuredOnHomepage: true,
+        featuredInObservatory: true,
+        displayOrder: 2,
+        createdAt: new Date()
+      }
+    },
+    {
+      id: 'gal_item_4',
+      data: {
+        title: 'Eagle Nebula',
+        description: 'Pillars of Creation standing tall in a sea of radiation.',
+        imageUrl: '/observatory/obs-1.jpeg',
+        featuredOnHomepage: false,
+        featuredInObservatory: true,
+        displayOrder: 3,
+        createdAt: new Date()
+      }
+    },
+    {
+      id: 'gal_item_5',
+      data: {
+        title: 'Carina Nebula',
+        description: 'Intense stellar winds sculpting massive pillars of cosmic gas.',
+        imageUrl: '/observatory/obs-4.jpeg',
+        featuredOnHomepage: false,
+        featuredInObservatory: true,
+        displayOrder: 4,
+        createdAt: new Date()
+      }
+    },
+    {
+      id: 'gal_item_6',
+      data: {
+        title: 'Whirlpool Galaxy',
+        description: 'Grand design spiral galaxy pulling a smaller satellite galaxy.',
+        imageUrl: '/observatory/obs-6.jpeg',
+        featuredOnHomepage: false,
+        featuredInObservatory: true,
+        displayOrder: 5,
         createdAt: new Date()
       }
     }
   ],
   music_items: [
     {
-      id: 'mus_item_1',
+      id: 'suzume',
       data: {
-        songTitle: 'Sparkle',
+        songTitle: 'Suzume',
         artist: 'RADWIMPS',
-        album: 'Your Name',
-        spotifyLink: 'https://open.spotify.com/track/3cr1595U4n4wFCS2e5Vkl2',
-        coverImage: '/music-mock.jpg',
+        album: 'Suzume',
+        spotifyLink: 'https://open.spotify.com/track/37s644WlQcI5Lw6H1NqXG8',
+        coverImage: 'https://i.scdn.co/image/ab67616d0000b27376c6691dc57c2cba450bd8ee',
         featured: true,
         displayOrder: 0,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    },
+    {
+      id: 'shinunoga',
+      data: {
+        songTitle: 'Shinunoga E-Wa',
+        artist: 'Fujii Kaze',
+        album: 'HELP EVER HURT NEVER',
+        spotifyLink: 'https://open.spotify.com/track/0o97lPx58V25rBM788n47A',
+        coverImage: 'https://i.scdn.co/image/ab67616d0000b273b060d40be44d9f1db71ec5d8',
+        featured: true,
+        displayOrder: 1,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    },
+    {
+      id: 'idol',
+      data: {
+        songTitle: 'Idol',
+        artist: 'YOASOBI',
+        album: 'Idol',
+        spotifyLink: 'https://open.spotify.com/track/2t137rr7CcKK77iQETWPld',
+        coverImage: 'https://i.scdn.co/image/ab67616d0000b27379201db4b86e88e2c0e86b05',
+        featured: true,
+        displayOrder: 2,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    },
+    {
+      id: 'night_dancer',
+      data: {
+        songTitle: 'NIGHT DANCER',
+        artist: 'imase',
+        album: 'NIGHT DANCER',
+        spotifyLink: 'https://open.spotify.com/track/4494l2a19QQm5I6Uv2ClN0',
+        coverImage: 'https://i.scdn.co/image/ab67616d0000b2733d98a0ae7c78a3a9babaf8af',
+        featured: true,
+        displayOrder: 3,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    },
+    {
+      id: 'suki_dakara',
+      data: {
+        songTitle: 'Suki Dakara',
+        artist: 'Yuika',
+        album: 'Suki Dakara',
+        spotifyLink: 'https://open.spotify.com/track/6WJ695oN1VqOatn377B6Hh',
+        coverImage: 'https://i.scdn.co/image/ab67616d0000b273b751dc3e8d7d457635293291',
+        featured: true,
+        displayOrder: 4,
         createdAt: new Date(),
         updatedAt: new Date()
       }

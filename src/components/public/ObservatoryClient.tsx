@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { GalleryItem } from '@/types';
 import { X } from 'lucide-react';
 
+import SomethingBeautifulButton from './SomethingBeautifulButton';
+
 interface ObservatoryClientProps {
   initialItems: GalleryItem[];
 }
@@ -32,12 +34,13 @@ export default function ObservatoryClient({ initialItems }: ObservatoryClientPro
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
-          className="text-center mb-20"
+          className="text-center mb-16 flex flex-col items-center"
         >
           <h1 className="text-5xl md:text-7xl font-oleo text-white mb-6 drop-shadow-lg">The Observatory</h1>
-          <p className="text-white/70 font-klee text-lg md:text-xl max-w-2xl mx-auto">
+          <p className="text-white/70 font-klee text-lg md:text-xl max-w-2xl mx-auto mb-10">
             A curated gallery of visions, moments, and starry-eyed wonders.
           </p>
+          <SomethingBeautifulButton />
         </motion.div>
 
         <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">

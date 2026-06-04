@@ -2,7 +2,9 @@ import { homepageService } from "@/lib/firebase/services/homepageService";
 import type { HomepageSection as HomepageSectionType } from "@/types";
 
 import HeroSection from "@/components/public/sections/HeroSection";
+import DailyThoughtSection from "@/components/public/sections/DailyThoughtSection";
 import AboutPreviewSection from "@/components/public/sections/AboutPreviewSection";
+import FindYourStorySection from "@/components/public/sections/FindYourStorySection";
 import FeaturedNovelSection from "@/components/public/sections/FeaturedNovelSection";
 import MusicPreviewSection from "@/components/public/sections/MusicPreviewSection";
 import GalleryPreviewSection from "@/components/public/sections/GalleryPreviewSection";
@@ -20,18 +22,30 @@ export default async function HomePage() {
     console.error("Error fetching homepage sections:", error);
   }
 
-  // If no sections are configured in CMS, we render the entire narrative flow as a fallback placeholder.
   const isFallback = sections.length === 0;
+
+  // Separate hero section if it exists in CMS
+  const heroSection = sections.find(s => s.type === "hero");
+  const otherSections = sections.filter(s => s.type !== "hero");
 
   return (
     <main className="min-h-screen relative text-white selection:bg-indigo-500/30 pb-12">
       {isFallback ? (
+        <HeroSection />
+      ) : (
+        heroSection && <HeroSection key={heroSection.id} content={{ ...heroSection.content, title: heroSection.title }} />
+      )}
+
+      {/* Feature 1: Cosmic Thought of the Day - Always displayed below Hero */}
+      <DailyThoughtSection />
+
+      {isFallback ? (
         <>
-          <HeroSection />
           <AboutPreviewSection content={{
             title: "Who Is StarMeyee?",
             description: "A dreamer navigating the infinite expanse of both the cosmos and the human imagination. I am deeply fascinated by the hidden mechanics of the universe, the quiet beauty of traditional philosophies, and the boundless possibilities of science fiction."
           }} />
+          <FindYourStorySection />
           <ThingsILoveSection />
           <FeaturedNovelSection content={{}} />
           <MusicPreviewSection />
@@ -39,12 +53,10 @@ export default async function HomePage() {
           <NewsletterSection />
         </>
       ) : (
-        sections.map((section) => {
+        otherSections.map((section) => {
           const combinedContent = { ...section.content, title: section.title };
           
           switch (section.type) {
-            case "hero":
-              return <HeroSection key={section.id} content={combinedContent} />;
             case "about_preview":
               return <AboutPreviewSection key={section.id} content={combinedContent} />;
             case "featured_novel":
