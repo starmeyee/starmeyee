@@ -126,7 +126,7 @@ export default function NovelsPage() {
               {novel.featured && <Check className="h-4 w-4 text-green-500" />}
             </TableCell>
             <TableCell className="text-muted-foreground text-sm">
-              {novel.createdAt ? new Date(novel.createdAt as any?.seconds ? (novel.createdAt as any).seconds * 1000 : novel.createdAt).toLocaleDateString() : 'Unknown'}
+              {novel.createdAt ? new Date((novel.createdAt as any)?.seconds ? (novel.createdAt as any).seconds * 1000 : novel.createdAt).toLocaleDateString() : 'Unknown'}
             </TableCell>
             <TableCell>
               <div className="flex items-center gap-2">

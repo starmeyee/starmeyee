@@ -104,7 +104,7 @@ export default function NovelCategoriesPage() {
               <TableCell className="font-medium">{cat.name}</TableCell>
               <TableCell className="text-muted-foreground">{cat.slug}</TableCell>
               <TableCell className="text-muted-foreground text-sm">
-                {cat.createdAt ? new Date(cat.createdAt as any?.seconds ? (cat.createdAt as any).seconds * 1000 : cat.createdAt).toLocaleDateString() : 'Unknown'}
+                {cat.createdAt ? new Date((cat.createdAt as any)?.seconds ? (cat.createdAt as any).seconds * 1000 : cat.createdAt).toLocaleDateString() : 'Unknown'}
               </TableCell>
               <TableCell>
                 <Button 

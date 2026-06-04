@@ -125,7 +125,7 @@ export default function ProductsPage() {
                 ) : <span className="text-muted-foreground text-xs">None</span>}
               </TableCell>
               <TableCell className="text-muted-foreground text-sm">
-                {product.createdAt ? new Date(product.createdAt as any?.seconds ? (product.createdAt as any).seconds * 1000 : product.createdAt).toLocaleDateString() : 'Unknown'}
+                {product.createdAt ? new Date((product.createdAt as any)?.seconds ? (product.createdAt as any).seconds * 1000 : product.createdAt).toLocaleDateString() : 'Unknown'}
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
