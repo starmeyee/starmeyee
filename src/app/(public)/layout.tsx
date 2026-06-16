@@ -3,6 +3,7 @@ import Navbar from '@/components/public/Navbar';
 import Footer from '@/components/public/Footer';
 import CosmicBackground from '@/components/public/CosmicBackground';
 import CosmicEasterEggs from '@/components/public/CosmicEasterEggs';
+import BrandThemeStyle from '@/components/public/BrandThemeStyle';
 
 export const revalidate = 60; // Cache and revalidate public pages every 60 seconds
 
@@ -14,6 +15,7 @@ export default function PublicLayout({
 
   return (
     <div className="relative flex min-h-[100dvh] flex-col text-white">
+      <BrandThemeStyle />
       <CosmicEasterEggs />
       <CosmicBackground />
       <Navbar />

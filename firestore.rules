@@ -1,0 +1,92 @@
+rules_version = '2';
+
+// Firestore Security Rules for StarMeyee.
+//
+// Security model:
+//   - Public content (novels, products, gallery, music, homepage, about,
+//     social links, settings, newsletter settings) is world-readable.
+//   - Writes to all content are restricted to admins (owner/admin/editor) OR
+//     an explicit email allowlist.
+//   - Subscribers can be created by anyone (public newsletter sign-up) but only
+//     read/managed by admins.
+//   - Users can read/write only their own profile document.
+//   - Read progress is keyed by an anonymous/user id and is self-managed.
+//
+// Deploy with:  firebase deploy --only firestore:rules
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Keep this list in sync with NEXT_PUBLIC_ADMIN_EMAILS / src/config/admin.ts
+    function adminEmails() {
+      return ['admin@starmeyee.com', 'admin@starmeyee.in'];
+    }
+
+    function userRole() {
+      return isSignedIn()
+        ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role
+        : null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email in adminEmails() ||
+        userRole() in ['owner', 'admin', 'editor']
+      );
+    }
+
+    // ── Public content: read by anyone, write by admins only ────────────────
+
+    match /novels/{doc}            { allow read: if true; allow write: if isAdmin(); }
+    match /novel_chapters/{doc}    { allow read: if true; allow write: if isAdmin(); }
+    match /novel_pages/{doc}       { allow read: if true; allow write: if isAdmin(); }
+    match /novel_categories/{doc}  { allow read: if true; allow write: if isAdmin(); }
+    match /products/{doc}          { allow read: if true; allow write: if isAdmin(); }
+    match /product_categories/{doc}{ allow read: if true; allow write: if isAdmin(); }
+    match /blogs/{doc}             { allow read: if true; allow write: if isAdmin(); }
+    match /gallery_items/{doc}     { allow read: if true; allow write: if isAdmin(); }
+    match /music_items/{doc}       { allow read: if true; allow write: if isAdmin(); }
+    match /homepage_sections/{doc} { allow read: if true; allow write: if isAdmin(); }
+    match /about_content/{doc}     { allow read: if true; allow write: if isAdmin(); }
+    match /newsletter_settings/{doc} { allow read: if true; allow write: if isAdmin(); }
+    match /social_links/{doc}      { allow read: if true; allow write: if isAdmin(); }
+    match /site_settings/{doc}     { allow read: if true; allow write: if isAdmin(); }
+
+    // ── Analytics: admin-only ─────────────────────────────────────────────────
+
+    match /analytics/{doc}         { allow read, write: if isAdmin(); }
+    match /novel_analytics/{doc}   { allow read: if true; allow write: if isAdmin(); }
+
+    // ── Subscribers: public create (sign-up), admin manage ──────────────────
+
+    match /subscribers/{doc} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ── Users: self-managed profile; admins can read all ────────────────────
+
+    match /users/{userId} {
+      allow read: if isAdmin() || (isSignedIn() && request.auth.uid == userId);
+      allow create, update: if isSignedIn() && request.auth.uid == userId;
+      allow delete: if isAdmin();
+    }
+
+    // ── Read progress: self-managed (supports anonymous reading) ────────────
+
+    match /read_progress/{doc} {
+      allow read, write: if true;
+    }
+
+    // Default deny everything else.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

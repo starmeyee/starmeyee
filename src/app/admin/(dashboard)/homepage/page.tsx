@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import {
   Dialog,
@@ -52,18 +53,54 @@ const SECTION_TYPES: { value: HomepageSectionType; label: string }[] = [
   { value: 'custom', label: 'Custom' },
 ];
 
+// Editable content fields per section type. The `key` maps directly to the
+// section.content object consumed by the matching public component.
+type ContentFieldType = 'text' | 'textarea';
+interface ContentFieldDef {
+  key: string;
+  label: string;
+  type: ContentFieldType;
+  placeholder?: string;
+}
+
+const CONTENT_FIELDS: Partial<Record<HomepageSectionType, ContentFieldDef[]>> = {
+  hero: [
+    { key: 'headline', label: 'Headline', type: 'textarea', placeholder: 'A Curious Mind Wandering Between Stars…' },
+    { key: 'subheadline', label: 'Subheadline', type: 'textarea', placeholder: 'Welcome to StarMeyee…' },
+    { key: 'primaryButtonText', label: 'Primary Button Text', type: 'text', placeholder: 'Begin the Journey' },
+    { key: 'primaryButtonLink', label: 'Primary Button Link', type: 'text', placeholder: '/about' },
+    { key: 'secondaryButtonText', label: 'Secondary Button Text', type: 'text', placeholder: 'View Observatory' },
+    { key: 'secondaryButtonLink', label: 'Secondary Button Link', type: 'text', placeholder: '/observatory' },
+  ],
+  about_preview: [
+    { key: 'description', label: 'Description', type: 'textarea', placeholder: 'A brief introduction…' },
+    { key: 'imageUrl', label: 'Image URL', type: 'text', placeholder: '/profile.jpeg' },
+  ],
+  featured_novel: [
+    { key: 'subtitle', label: 'Subtitle (optional)', type: 'text', placeholder: 'An italic tagline under the title' },
+  ],
+  music_preview: [
+    { key: 'subtitle', label: 'Subtitle', type: 'textarea', placeholder: 'The melodies that fuel my imagination…' },
+  ],
+  gallery_preview: [
+    { key: 'subtitle', label: 'Subtitle', type: 'textarea', placeholder: 'Glimpses of the cosmos through my lens…' },
+  ],
+};
+
 // ─── Default form state ────────────────────────────────────────────────────────
 
 interface SectionFormState {
   type: HomepageSectionType;
   title: string;
   enabled: boolean;
+  content: Record<string, string>;
 }
 
 const DEFAULT_FORM: SectionFormState = {
   type: 'hero',
   title: '',
   enabled: true,
+  content: {},
 };
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -113,7 +150,12 @@ export default function HomepageSectionsPage() {
 
   const openEdit = (section: HomepageSection) => {
     setEditTarget(section);
-    setForm({ type: section.type, title: section.title, enabled: section.enabled });
+    // Coerce existing content values to strings for the form inputs.
+    const content: Record<string, string> = {};
+    Object.entries(section.content || {}).forEach(([k, v]) => {
+      content[k] = v == null ? '' : String(v);
+    });
+    setForm({ type: section.type, title: section.title, enabled: section.enabled, content });
     setDialogOpen(true);
   };
 
@@ -132,11 +174,21 @@ export default function HomepageSectionsPage() {
     }
     try {
       setSaving(true);
+      // Persist only the content fields defined for this section type, dropping
+      // empties so the public components fall back to their defaults.
+      const fields = CONTENT_FIELDS[form.type] ?? [];
+      const cleanedContent: Record<string, string> = {};
+      fields.forEach((f) => {
+        const val = (form.content[f.key] ?? '').trim();
+        if (val) cleanedContent[f.key] = val;
+      });
+
       if (editTarget) {
         await homepageService.updateSection(editTarget.id, {
           type: form.type,
           title: form.title.trim(),
           enabled: form.enabled,
+          content: cleanedContent,
         });
         toast.success('Section updated.');
       } else {
@@ -148,7 +200,7 @@ export default function HomepageSectionsPage() {
           title: form.title.trim(),
           enabled: form.enabled,
           displayOrder: nextOrder,
-          content: {},
+          content: cleanedContent,
         });
         toast.success('Section created.');
       }
@@ -310,7 +362,7 @@ export default function HomepageSectionsPage() {
             </DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-5 py-2">
+          <div className="space-y-5 py-2 max-h-[65vh] overflow-y-auto pr-1">
             {/* Type */}
             <div className="space-y-2">
               <Label htmlFor="section-type">Section Type</Label>
@@ -343,6 +395,46 @@ export default function HomepageSectionsPage() {
                 onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
               />
             </div>
+
+            {/* Type-specific content fields */}
+            {(CONTENT_FIELDS[form.type] ?? []).map((field) => (
+              <div key={field.key} className="space-y-2">
+                <Label htmlFor={`content-${field.key}`}>{field.label}</Label>
+                {field.type === 'textarea' ? (
+                  <Textarea
+                    id={`content-${field.key}`}
+                    rows={2}
+                    placeholder={field.placeholder}
+                    value={form.content[field.key] ?? ''}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        content: { ...prev.content, [field.key]: e.target.value },
+                      }))
+                    }
+                  />
+                ) : (
+                  <Input
+                    id={`content-${field.key}`}
+                    placeholder={field.placeholder}
+                    value={form.content[field.key] ?? ''}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        content: { ...prev.content, [field.key]: e.target.value },
+                      }))
+                    }
+                  />
+                )}
+              </div>
+            ))}
+
+            {form.type === 'newsletter' && (
+              <p className="text-xs text-muted-foreground rounded-md bg-muted/50 p-3">
+                Newsletter headline, description and button text are managed on the
+                <span className="font-medium"> Newsletter </span> page.
+              </p>
+            )}
 
             {/* Enabled */}
             <div className="flex items-center justify-between rounded-lg border border-border p-4">

@@ -15,11 +15,12 @@
   --font-sans: var(--font-klee-one), sans-serif;
   --font-heading: var(--font-oleo-script), cursive;
 
-  /* Brand Colors */
-  --color-brand-primary: #211C84;
-  --color-brand-accent: #4D55CC;
-  --color-brand-secondary: #7A73D1;
-  --color-brand-soft: #B5A8D5;
+  /* Brand Colors — reference runtime-overridable variables (see :root) so the
+     admin Settings page can re-theme the live site. */
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-brand-soft: var(--brand-soft);
 
   /* Shadcn UI Variables */
   --color-sidebar-ring: var(--sidebar-ring);
@@ -61,6 +62,12 @@
 }
 
 :root {
+  /* Brand color defaults — overridden at runtime by site settings (BrandThemeStyle). */
+  --brand-primary: #211C84;
+  --brand-accent: #4D55CC;
+  --brand-secondary: #7A73D1;
+  --brand-soft: #B5A8D5;
+
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);

@@ -32,6 +32,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
+
+      // Maintain a lightweight presence cookie so middleware can redirect
+      // unauthenticated visitors away from /admin before the page renders.
+      // NOTE: this is UX/defense-in-depth only — the real security boundary is
+      // Firestore Security Rules + the client-side AdminGuard.
+      if (typeof document !== 'undefined') {
+        if (firebaseUser) {
+          document.cookie = `sm_session=1; path=/; max-age=3600; samesite=lax`;
+        } else {
+          document.cookie = `sm_session=; path=/; max-age=0; samesite=lax`;
+        }
+      }
+
       if (firebaseUser) {
         // Fetch user profile from Firestore
         try {

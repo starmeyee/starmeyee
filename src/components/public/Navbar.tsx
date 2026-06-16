@@ -10,6 +10,7 @@ import type { SiteSettings } from '@/types';
 const links = [
   { href: '/', label: 'Home' },
   { href: '/writes', label: 'Library' },
+  { href: '/products', label: 'Store' },
   { href: '/about', label: 'About' },
   { href: '/observatory', label: 'Observatory' },
 ];

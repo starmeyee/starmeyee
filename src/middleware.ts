@@ -1,44 +1,42 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// This is a foundational middleware.
-// For robust Firebase auth in middleware, you typically use next-firebase-auth-edge 
-// or verify session cookies. Here we set up the structure.
-
+/**
+ * Route protection for the admin area.
+ *
+ * The app authenticates with the Firebase client SDK, so we cannot verify a
+ * real ID token in the edge runtime without a heavier setup (session cookies +
+ * next-firebase-auth-edge). Instead we check a lightweight presence cookie
+ * (`sm_session`) that AuthContext sets/clears on auth state changes. This gives
+ * a fast server-side redirect and avoids a flash of the admin UI for logged-out
+ * visitors.
+ *
+ * IMPORTANT: This is defense-in-depth / UX only. The real security boundary is
+ * Firestore Security Rules (see firestore.rules) plus the client-side
+ * AdminGuard, which enforce role/email authorization.
+ */
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  
-  // Protect admin routes
-  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
-    // Basic structural check for auth token/cookie
-    // Replace 'session' with your actual auth cookie name later
-    const session = request.cookies.get('session');
-    
-    // TEMPORARY: Commented out the server-side redirect until session cookies 
-    // are implemented via Firebase Admin SDK. 
-    // Client-side ProtectedRoute handles this for now.
-    /*
-    if (!session) {
-      return NextResponse.redirect(new URL('/admin/login', request.url));
-    }
-    */
-    
-    // Note: True role verification should happen server-side 
-    // or by decoding the JWT securely in edge runtime.
+  const hasSession = Boolean(request.cookies.get('sm_session')?.value);
+
+  const isLoginRoute = pathname.startsWith('/admin/login');
+  const isAdminRoute = pathname.startsWith('/admin');
+
+  // Block the dashboard when there's no session — send to login.
+  if (isAdminRoute && !isLoginRoute && !hasSession) {
+    const loginUrl = new URL('/admin/login', request.url);
+    loginUrl.searchParams.set('redirect', pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  // Already authenticated users shouldn't see the login page.
+  if (isLoginRoute && hasSession) {
+    return NextResponse.redirect(new URL('/admin', request.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico, sitemap.xml, robots.txt (metadata files)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
-  ],
+  matcher: ['/admin/:path*'],
 };

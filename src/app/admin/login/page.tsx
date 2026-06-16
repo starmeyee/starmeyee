@@ -23,8 +23,11 @@ export default function LoginPage() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      // Let the AuthContext onAuthStateChanged handle redirect, or we can force it here
-      router.push('/admin');
+      // Set the session-presence cookie synchronously so the middleware lets us
+      // into /admin immediately (AuthContext also maintains it thereafter).
+      document.cookie = `sm_session=1; path=/; max-age=3600; samesite=lax`;
+      const redirect = new URLSearchParams(window.location.search).get('redirect');
+      router.push(redirect && redirect.startsWith('/admin') ? redirect : '/admin');
     } catch (err: any) {
       setError(err.message || 'Failed to sign in. Please check your credentials.');
     } finally {
