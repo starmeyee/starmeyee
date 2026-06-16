@@ -1,44 +1,78 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, Maximize2 } from "lucide-react";
+import { galleryService } from "@/lib/firebase/services/galleryService";
 
 interface GalleryPreviewSectionProps {
-  content?: Record<string, any>;
+  content?: Record<string, unknown>;
 }
 
+interface PreviewImage {
+  id: string;
+  url: string;
+  title: string;
+  span: string;
+}
+
+const SPANS = [
+  "md:col-span-2 md:row-span-2",
+  "md:col-span-1 md:row-span-1",
+  "md:col-span-1 md:row-span-1",
+];
+
+// Used only when the admin hasn't marked any gallery images as "Home Feature".
+const FALLBACK_IMAGES: PreviewImage[] = [
+  { id: "1", url: "/observatory/obs-8.jpeg", title: "Starry Memory", span: SPANS[0] },
+  { id: "2", url: "/observatory/obs-2.jpeg", title: "Silent Night", span: SPANS[1] },
+  { id: "3", url: "/observatory/obs-5.jpeg", title: "Distant Lights", span: SPANS[2] },
+];
+
 export default function GalleryPreviewSection({ content }: GalleryPreviewSectionProps) {
-  const images = [
-    {
-      id: "1",
-      url: "/observatory/obs-8.jpeg",
-      title: "Starry Memory",
-      span: "md:col-span-2 md:row-span-2",
-    },
-    {
-      id: "2",
-      url: "/observatory/obs-2.jpeg",
-      title: "Silent Night",
-      span: "md:col-span-1 md:row-span-1",
-    },
-    {
-      id: "3",
-      url: "/observatory/obs-5.jpeg",
-      title: "Distant Lights",
-      span: "md:col-span-1 md:row-span-1",
-    },
-  ];
+  const title = (content?.title as string) || "The Observatory";
+  const subtitle =
+    (content?.subtitle as string) ||
+    (content?.description as string) ||
+    "Glimpses of the cosmos through my lens. A curated collection of starry-eyed wonders.";
+
+  const [images, setImages] = useState<PreviewImage[]>([]);
+
+  useEffect(() => {
+    async function fetchGallery() {
+      try {
+        const items = await galleryService.getAllGalleryItems();
+        const featured = items.filter((i) => i.featuredOnHomepage).slice(0, 3);
+        if (featured.length > 0) {
+          setImages(
+            featured.map((item, idx) => ({
+              id: item.id,
+              url: item.imageUrl,
+              title: item.title,
+              span: SPANS[idx] || SPANS[SPANS.length - 1],
+            }))
+          );
+        } else {
+          setImages(FALLBACK_IMAGES);
+        }
+      } catch (error) {
+        console.error("Error fetching gallery preview:", error);
+        setImages(FALLBACK_IMAGES);
+      }
+    }
+    fetchGallery();
+  }, []);
+
+  if (images.length === 0) return null;
 
   return (
     <section className="py-24 px-6 relative z-10">
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div>
-            <h2 className="text-4xl md:text-5xl font-oleo text-white mb-4">The Observatory</h2>
-            <p className="text-white/70 font-klee text-xl max-w-xl">
-              Glimpses of the cosmos through my lens. A curated collection of starry-eyed wonders.
-            </p>
+            <h2 className="text-4xl md:text-5xl font-oleo text-white mb-4">{title}</h2>
+            <p className="text-white/70 font-klee text-xl max-w-xl">{subtitle}</p>
           </div>
           <Link
             href="/observatory"

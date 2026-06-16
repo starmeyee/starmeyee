@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Loader2, ArrowLeft, Plus, Trash2, ArrowUp, ArrowDown, Image as ImageIcon, Type, Quote, Minus, MessageSquare, Save, GripVertical } from "lucide-react";
@@ -30,6 +31,7 @@ export default function PageEditorPage({
 
   const [page, setPage] = useState<NovelPage | null>(null);
   const [blocks, setBlocks] = useState<ContentBlock[]>([]);
+  const [published, setPublished] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -41,6 +43,7 @@ export default function PageEditorPage({
         if (p) {
           setPage(p);
           setBlocks(p.blocks || []);
+          setPublished(p.published || false);
         } else {
           toast.error("Page not found");
         }
@@ -95,7 +98,7 @@ export default function PageEditorPage({
     try {
       // Re-assign order before saving
       const orderedBlocks = blocks.map((b, i) => ({ ...b, order: i }));
-      await novelBuilderService.updatePage(pageId, { blocks: orderedBlocks });
+      await novelBuilderService.updatePage(pageId, { blocks: orderedBlocks, published });
       setBlocks(orderedBlocks);
       toast.success("Page saved successfully");
     } catch (err) {
@@ -138,10 +141,18 @@ export default function PageEditorPage({
             <p className="text-sm text-muted-foreground">Manage blocks for this page</p>
           </div>
         </div>
-        <Button onClick={handleSave} disabled={isSaving} className="gap-2">
-          {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-          Save Changes
-        </Button>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2" title="Only published pages appear on the public site">
+            <Switch checked={published} onCheckedChange={setPublished} aria-label="Toggle page published" />
+            <span className={`text-sm ${published ? "text-green-600" : "text-muted-foreground"}`}>
+              {published ? "Published" : "Draft"}
+            </span>
+          </div>
+          <Button onClick={handleSave} disabled={isSaving} className="gap-2">
+            {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+            Save Changes
+          </Button>
+        </div>
       </div>
 
       <div className="space-y-4">

@@ -12,7 +12,7 @@ import { ConfirmDialog } from "@/components/admin/cms/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { TableRow, TableCell } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Check, Edit, Trash2 } from "lucide-react";
+import { Check, Edit, Trash2, ListOrdered } from "lucide-react";
 
 export default function NovelsPage() {
   const [novels, setNovels] = useState<Novel[]>([]);
@@ -130,8 +130,13 @@ export default function NovelsPage() {
             </TableCell>
             <TableCell>
               <div className="flex items-center gap-2">
+                <Link href={`/admin/novels/${novel.id}/builder`}>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-brand-primary" title="Chapters & Pages">
+                    <ListOrdered className="h-4 w-4" />
+                  </Button>
+                </Link>
                 <Link href={`/admin/novels/${novel.id}/edit`}>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-brand-primary">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-brand-primary" title="Edit novel">
                     <Edit className="h-4 w-4" />
                   </Button>
                 </Link>

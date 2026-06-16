@@ -6,6 +6,7 @@ import { auth } from '@/lib/firebase/config';
 import { firestoreService } from '@/lib/firebase/services/firestore';
 import { User, Role } from '@/types';
 import { useRouter, usePathname } from 'next/navigation';
+import { isAdminEmail } from '@/config/admin';
 
 interface AuthContextType {
   user: FirebaseUser | null;
@@ -36,15 +37,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         try {
           const userDoc = await firestoreService.getDocument<User>('users', firebaseUser.uid);
           if (userDoc) {
+            // Promote allowlisted accounts that were created without an
+            // elevated role (e.g. via the create-admin script).
+            if (isAdminEmail(firebaseUser.email) && userDoc.role !== 'owner') {
+              await firestoreService.updateDocument<User>('users', firebaseUser.uid, {
+                role: 'owner',
+                updatedAt: new Date(),
+              });
+              userDoc.role = 'owner';
+            }
             setProfile(userDoc);
           } else {
-            // Auto-create basic profile if it doesn't exist
+            // Auto-create profile. Allowlisted emails become owners; everyone
+            // else gets the default "user" role (no admin access).
+            const role: Role = isAdminEmail(firebaseUser.email) ? 'owner' : 'user';
             const newProfile: User = {
               uid: firebaseUser.uid,
               email: firebaseUser.email || '',
               displayName: firebaseUser.displayName,
               photoURL: firebaseUser.photoURL,
-              role: 'user', // default role
+              role,
               createdAt: new Date(),
               updatedAt: new Date(),
             };

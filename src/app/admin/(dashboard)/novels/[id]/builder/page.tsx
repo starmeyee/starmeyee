@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Loader2, Plus, Edit, Trash2, ArrowUp, ArrowDown, FileText } from "lucide-react";
 import Link from "next/link";
@@ -107,6 +108,33 @@ export default function NovelBuilderPage({ params }: { params: Promise<{ id: str
       toast.error("Failed to add page");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const toggleChapterPublished = async (chapter: NovelChapter) => {
+    const next = !chapter.published;
+    setChapters(prev => prev.map(c => c.id === chapter.id ? { ...c, published: next } : c));
+    try {
+      await novelBuilderService.updateChapter(chapter.id, { published: next });
+      toast.success(next ? "Chapter published" : "Chapter set to draft");
+    } catch (err) {
+      toast.error("Failed to update chapter");
+      await fetchData();
+    }
+  };
+
+  const togglePagePublished = async (chapterId: string, page: NovelPage) => {
+    const next = !page.published;
+    setPagesByChapter(prev => ({
+      ...prev,
+      [chapterId]: (prev[chapterId] || []).map(p => p.id === page.id ? { ...p, published: next } : p),
+    }));
+    try {
+      await novelBuilderService.updatePage(page.id, { published: next });
+      toast.success(next ? "Page published" : "Page set to draft");
+    } catch (err) {
+      toast.error("Failed to update page");
+      await fetchData();
     }
   };
 
@@ -238,13 +266,18 @@ export default function NovelBuilderPage({ params }: { params: Promise<{ id: str
                         #{chapIndex + 1}
                       </span>
                       {chapter.title}
-                      {chapter.published ? (
-                        <span className="text-xs bg-green-500/10 text-green-500 px-2 py-0.5 rounded-full border border-green-500/20">Published</span>
-                      ) : (
-                        <span className="text-xs bg-yellow-500/10 text-yellow-500 px-2 py-0.5 rounded-full border border-yellow-500/20">Draft</span>
-                      )}
                     </CardTitle>
                     <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-2 mr-2 px-2" title="Toggle published state (only published chapters appear on the site)">
+                        <Switch
+                          checked={chapter.published}
+                          onCheckedChange={() => toggleChapterPublished(chapter)}
+                          aria-label="Toggle chapter published"
+                        />
+                        <span className={`text-xs ${chapter.published ? "text-green-500" : "text-muted-foreground"}`}>
+                          {chapter.published ? "Published" : "Draft"}
+                        </span>
+                      </div>
                       <Button variant="ghost" size="icon" onClick={() => moveChapter(chapIndex, 'up')} disabled={chapIndex === 0}>
                         <ArrowUp className="h-4 w-4" />
                       </Button>
@@ -270,12 +303,20 @@ export default function NovelBuilderPage({ params }: { params: Promise<{ id: str
                           <div className="flex items-center gap-3">
                             <FileText className="h-4 w-4 text-muted-foreground" />
                             <span className="font-medium">{page.title}</span>
-                            {!page.published && (
-                              <span className="text-[10px] uppercase tracking-wider bg-muted text-muted-foreground px-1.5 py-0.5 rounded">Draft</span>
-                            )}
                           </div>
                           
-                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity" title="Toggle published (only published pages appear on the site)">
+                              <Switch
+                                checked={page.published}
+                                onCheckedChange={() => togglePagePublished(chapter.id, page)}
+                                aria-label="Toggle page published"
+                              />
+                              <span className={`text-[10px] uppercase tracking-wider ${page.published ? "text-green-500" : "text-muted-foreground"}`}>
+                                {page.published ? "Live" : "Draft"}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => movePage(chapter.id, pageIndex, 'up')} disabled={pageIndex === 0}>
                               <ArrowUp className="h-4 w-4" />
                             </Button>
@@ -290,6 +331,7 @@ export default function NovelBuilderPage({ params }: { params: Promise<{ id: str
                                 <Edit className="h-3 w-3" /> Edit
                               </Button>
                             </Link>
+                            </div>
                           </div>
                         </div>
                       ))}

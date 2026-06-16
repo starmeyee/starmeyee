@@ -42,13 +42,18 @@ export default async function NovelLandingPage({ params }: Props) {
   let novel = null;
   let publishedChapters = [];
   let firstChapter = null;
+  let categoryMap: Record<string, string> = {};
 
   try {
     novel = await novelService.getNovelBySlug(slug);
     if (novel && novel.status === "published") {
-      const allChapters = await novelBuilderService.getChaptersForNovel(novel.id);
+      const [allChapters, allCategories] = await Promise.all([
+        novelBuilderService.getChaptersForNovel(novel.id),
+        novelService.getAllCategories(),
+      ]);
       publishedChapters = allChapters.filter(c => c.published);
       firstChapter = publishedChapters[0];
+      categoryMap = Object.fromEntries(allCategories.map(c => [c.id, c.name]));
     }
   } catch (error) {
     console.error("Error loading novel data in WritesPage:", error);
@@ -105,7 +110,7 @@ export default async function NovelLandingPage({ params }: Props) {
                 <div className="flex flex-wrap gap-2 mb-6 justify-center lg:justify-start">
                   {novel.categories.map((cat, idx) => (
                     <Badge key={idx} variant="outline" className="border-brand-accent/50 text-brand-accent backdrop-blur-sm">
-                      {cat}
+                      {categoryMap[cat] || cat}
                     </Badge>
                   ))}
                 </div>

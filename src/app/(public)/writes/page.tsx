@@ -11,9 +11,14 @@ export const metadata = {
 
 export default async function WritesPage() {
   let publishedNovels = [];
+  let categoryMap: Record<string, string> = {};
   try {
-    const allNovels = await novelService.getAllNovels();
+    const [allNovels, allCategories] = await Promise.all([
+      novelService.getAllNovels(),
+      novelService.getAllCategories(),
+    ]);
     publishedNovels = allNovels.filter(n => n.status === "published");
+    categoryMap = Object.fromEntries(allCategories.map(c => [c.id, c.name]));
   } catch (error) {
     console.error("Error fetching novels for library page:", error);
   }
@@ -63,7 +68,7 @@ export default async function WritesPage() {
                     <div className="flex flex-wrap gap-2 mt-auto">
                       {novel.categories.map((cat, idx) => (
                         <Badge key={idx} variant="secondary" className="bg-brand-soft/50 text-brand-primary">
-                          {cat}
+                          {categoryMap[cat] || cat}
                         </Badge>
                       ))}
                     </div>
