@@ -1,0 +1,23 @@
+name: Deploy Firestore Rules
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'firestore.rules'
+
+  # Allow manual trigger from Actions tab
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy Firestore Rules
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only firestore:rules
+        env:
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
