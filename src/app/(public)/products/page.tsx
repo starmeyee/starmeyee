@@ -25,8 +25,8 @@ export default async function ProductsPage() {
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="mb-12 text-center">
-        <h1 className="font-oleo text-5xl font-bold text-foreground mb-4">The Store</h1>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
+        <h1 className="font-oleo text-5xl font-bold text-white mb-4">The Store</h1>
+        <p className="text-white/70 max-w-2xl mx-auto">
           Books, art, and digital creations born from stardust and imagination.
         </p>
       </div>
@@ -59,7 +59,7 @@ export default async function ProductsPage() {
               )}
 
               <div className="p-6 flex flex-col flex-1">
-                <h2 className="font-oleo text-2xl font-bold mb-2 text-foreground group-hover:text-brand-accent transition-colors">
+                <h2 className="font-oleo text-2xl font-bold mb-2 text-white group-hover:text-brand-accent transition-colors">
                   {product.title}
                 </h2>
                 <p className="text-muted-foreground text-sm line-clamp-3 mb-4 flex-1">
@@ -77,7 +77,7 @@ export default async function ProductsPage() {
                 )}
 
                 <div className="flex items-center justify-between mt-auto pt-2">
-                  <span className="font-oleo text-xl text-foreground">
+                  <span className="font-oleo text-xl text-white">
                     {product.price > 0 ? `₹${product.price}` : "Free"}
                   </span>
                   {product.gumroadLink ? (
